@@ -252,7 +252,9 @@ class Collection
 
         // Set sort configuration
         $sort = $this->getSort();
-        $builder = $builder->orderBy($sort['index'], $sort['dir']);
+        if ($sort['index'] && $sort['dir']) {
+            $builder = $builder->orderBy($sort['index'], $sort['dir']);
+        }
         /*
          * END sort
          */
