@@ -144,5 +144,74 @@ echo ResourceTable::of($news)
 
 Where `perPage(20)` sets resources per page. Method `page(2)` sets current page. Method `orderBy('id', 'DESC')` sets default sorting.
 
+## Templating
+Resource Table allows you to create your own templates! If you don't need to then you are free to use one of the following built-in templates:
+ - `simple` *(default)*
+ - `bootstrap` *(supported by Bootstrap 3)*
+ - `advanced_example` - it's just a advanced template example, you can use it as a blueprint of your own one!
+
+### Using built-in/custom table templates
+If you want to use core template just call `view()` method on your `ResourceTable` object:
+```php
+$collection = ResourceTable::of($news)
+    ->addColumn...
+    ...
+    ->view('bootstrap');
+```
+
+### Creating custom table template
+Create your own blade view file, name it as you want. For this example I named my file `my_table.blade.php` under `tables` directory.
+Let's say that I need to put custom attribute on each `<tr>` node in `<tbody>`:
+```html
+<table class="my-resource-table">
+    {!! $table->head() !!}
+    <tbody>
+    @if (empty($collection))
+        <tr><td colspan="{{ count($columns) }}">No records found.</td></tr>
+    @else
+        @foreach ($collection as $row)
+            
+            <!-- Here is my custom attribute -->
+            <tr data-id="{{ $row->id }}">
+            
+                @foreach ($columns as $column)
+                <td>{!! $column->content($row) !!}</td>
+                @endforeach
+            </tr>
+        @endforeach
+    @endif
+    </tbody>
+</table>
+@if ($paginator)
+{!! $paginator->render() !!}
+@endif
+```
+
+In every view template you aree free to use following variables:
+ - `$collection` - it's just a array with all results
+ - `$columns` - an array with table columns objects (see `Msieprawski\ResourceTable\Helpers\Column` for available methods)
+ - `$paginator` - an Laravel's built-in pagination presenter (for now it's a `Illuminate\Pagination\BootstrapThreePresenter`)
+ - `$table` - table generator object (see `Msieprawski\ResourceTable\Generators\Table` for available methods)
+ 
+At the end just tell your `ResourceTable` object to use your custom template:
+```php
+$news = DB::table('news')
+    ->select(['news.id', 'news.subject']);
+
+echo ResourceTable::of($news)
+    ->addColumn([
+        'index' => 'id',
+        'label' => 'ID',
+        'sortable' => true,
+    ])
+    ->addColumn([
+        'index' => 'subject',
+        'label' => 'Subject',
+        'sortable' => true,
+    ])
+    ->customView('tables.my_table')
+    ->make();
+```
+
 ## License
 Licensed under the MIT License
