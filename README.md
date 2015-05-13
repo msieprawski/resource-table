@@ -145,12 +145,12 @@ echo ResourceTable::of($news)
 Where `perPage(20)` sets resources per page. Method `page(2)` sets current page. Method `orderBy('id', 'DESC')` sets default sorting.
 
 ## Templating
-Resource Table allows you to create your own templates! If you don't need to then you are free to use one of the following built-in templates:
+Resource Table allows you to create your own templates! However if you don't need to use own templates, then you are free to use one of the following built-in views:
  - `simple` *(default)*
  - `bootstrap` *(supported by Bootstrap 3)*
  - `advanced_example` - it's just a advanced template example, you can use it as a blueprint of your own one!
 
-### Using built-in/custom table templates
+### Using built-in table templates
 If you want to use core template just call `view()` method on your `ResourceTable` object:
 ```php
 $collection = ResourceTable::of($news)
@@ -187,30 +187,18 @@ Let's say that I need to put custom attribute on each `<tr>` node in `<tbody>`:
 @endif
 ```
 
-In every view template you aree free to use following variables:
- - `$collection` - it's just a array with all results
+In every view template you are free to use following variables:
+ - `$collection` - an array with all results *(literally array with arrays)*
  - `$columns` - an array with table columns objects (see `Msieprawski\ResourceTable\Helpers\Column` for available methods)
  - `$paginator` - an Laravel's built-in pagination presenter (for now it's a `Illuminate\Pagination\BootstrapThreePresenter`)
  - `$table` - table generator object (see `Msieprawski\ResourceTable\Generators\Table` for available methods)
  
 At the end just tell your `ResourceTable` object to use your custom template:
 ```php
-$news = DB::table('news')
-    ->select(['news.id', 'news.subject']);
-
-echo ResourceTable::of($news)
-    ->addColumn([
-        'index' => 'id',
-        'label' => 'ID',
-        'sortable' => true,
-    ])
-    ->addColumn([
-        'index' => 'subject',
-        'label' => 'Subject',
-        'sortable' => true,
-    ])
-    ->customView('tables.my_table')
-    ->make();
+$collection = ResourceTable::of($news)
+    ->addColumn...
+    ...
+    ->customView('tables.my_table');
 ```
 
 ## License
