@@ -1,11 +1,12 @@
 # Resource Table
 ## About
-This module has been created as a alternative for DataTable. It doesn't use AJAX or any JavaScript. It's very light and scalable. I'll do my best to develop it all the time because I'll be using it on my projects.
+This Laravel package has been created as a alternative for DataTable. It doesn't use AJAX or any JavaScript. It's very light and scalable. Use it for generating table with data without paying attention to searching/sorting/paginating results. It'll do it for yourself! I'll do my best to develop it all the time because I'll be using it on my projects. 
 
 ## TO DO
- - pagination renderer
- - more table layouts *(bootstrap layout for example)*
+ - custom table layouts
  - searchable columns
+ - custom pagination layouts *(not available in Laravel 5 but it'll be using this package)*
+ - add some tests
  
 ## Compatibility
 Currently package is compatible with Laravel 5
@@ -13,6 +14,7 @@ Currently package is compatible with Laravel 5
 ## Feature overview
  - supporting Eloquent ORM and Fluent Query Builder
  - ability to join tables and sort results by joined columns
+ - uses built in Laravel's paginator
  - more coming...
  
 ## Installation
