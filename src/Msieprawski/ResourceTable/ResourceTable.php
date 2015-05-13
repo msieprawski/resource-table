@@ -19,6 +19,12 @@ class ResourceTable
     // Use this if view name not provided
     const DEFAULT_VIEW_NAME = 'resource-table::simple';
 
+    // Use this as a default global filter value
+    const DEFAULT_GLOBAL_FILTER = true;
+
+    // Use this as a default column filter value
+    const DEFAULT_COLUMNS_FILTER = true;
+
     /**
      * Will be "last set" Collection object after calling ResourceTable::of
      *

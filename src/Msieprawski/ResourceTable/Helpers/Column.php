@@ -164,6 +164,16 @@ class Column
     }
 
     /**
+     * Checks if column is searchable
+     *
+     * @return bool
+     */
+    public function searchable()
+    {
+        return isset($this->_data['searchable']) && $this->_data['searchable'];
+    }
+
+    /**
      * Returns column sort anchor (result depends on view name)
      *
      * @return string

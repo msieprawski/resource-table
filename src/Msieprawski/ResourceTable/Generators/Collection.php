@@ -73,6 +73,20 @@ class Collection
     private $_viewName = ResourceTable::DEFAULT_VIEW_NAME;
 
     /**
+     * Determine if column filter (search inputs for each searchable column) should be rendered or not
+     *
+     * @var bool
+     */
+    private $_columnsFilter = ResourceTable::DEFAULT_COLUMNS_FILTER;
+
+    /**
+     * Determine if global filter (search input) should be rendered or not
+     *
+     * @var bool
+     */
+    private $_globalFilter = ResourceTable::DEFAULT_GLOBAL_FILTER;
+
+    /**
      * Sets builder object
      *
      * @param \Illuminate\Database\Query\Builder $builder
@@ -176,6 +190,10 @@ class Collection
             'paginate'            => $this->_paginate,
             'paginator_presenter' => $this->_getPaginatorPresenter($items),
             'view_name'           => $this->_viewName,
+            'filter'              => [
+                'global'  => $this->_globalFilter,
+                'columns' => $this->_columnsFilter,
+            ],
         ]))->make();
     }
 
@@ -247,6 +265,40 @@ class Collection
     public function getSort()
     {
         return $this->_sort;
+    }
+
+    /**
+     * Sets true if column filter should be rendered
+     *
+     * @param bool $enabled
+     * @return $this
+     * @throws CollectionException
+     */
+    public function columnsFilter($enabled)
+    {
+        if (!is_bool($enabled)) {
+            throw new CollectionException('Columns filter must be enabled or disabled. Bool is required.');
+        }
+
+        $this->_columnsFilter = $enabled;
+        return $this;
+    }
+
+    /**
+     * Sets true if global filter should be rendered
+     *
+     * @param bool $enabled
+     * @return $this
+     * @throws CollectionException
+     */
+    public function globalFilter($enabled)
+    {
+        if (!is_bool($enabled)) {
+            throw new CollectionException('Global filter must be enabled or disabled. Bool is required.');
+        }
+
+        $this->_globalFilter = $enabled;
+        return $this;
     }
 
     /**

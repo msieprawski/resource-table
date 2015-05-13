@@ -63,6 +63,27 @@ class Table
             $head .= '</th>';
         }
         $head .= '</tr>';
+
+        if ($this->_config['filter']['columns']) {
+            // Render row with search inputs
+            $head .= '<tr>';
+
+            foreach ($this->_getColumns() as $column) {
+                // Render each column
+
+                if (!$column->searchable()) {
+                    $head .= '<td></td>';
+                    continue;
+                }
+
+                $head .= '<td>';
+                    $head .= '<input type="text" class="form-control" name="resource_table_'.$column->index().'" />';
+                $head .= '</td>';
+            }
+
+            $head .= '</tr>';
+        }
+
         $head .= '</thead>';
         return $head;
     }
