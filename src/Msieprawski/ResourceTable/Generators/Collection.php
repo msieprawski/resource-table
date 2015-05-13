@@ -66,6 +66,13 @@ class Collection
     private $_sort = ['index' => '', 'dir' => ResourceTable::DEFAULT_SORT_DIR];
 
     /**
+     * View name to render
+     *
+     * @var string
+     */
+    private $_viewName = ResourceTable::DEFAULT_VIEW_NAME;
+
+    /**
      * Sets builder object
      *
      * @param \Illuminate\Database\Query\Builder $builder
@@ -168,6 +175,7 @@ class Collection
             'per_page'            => $this->_perPage,
             'paginate'            => $this->_paginate,
             'paginator_presenter' => $this->_getPaginatorPresenter($items),
+            'view_name'           => $this->_viewName,
         ]))->make();
     }
 
@@ -186,6 +194,48 @@ class Collection
         }
 
         $this->_sort = ['index' => $index, 'dir' => $direction];
+        return $this;
+    }
+
+    /**
+     * Sets package view name for further rendering
+     *
+     * @param string $name
+     * @return $this
+     * @throws CollectionException
+     */
+    public function view($name)
+    {
+        return $this->_setView($name);
+    }
+
+    /**
+     * Sets custom view name for further rendering
+     *
+     * @param string $name
+     * @return $this
+     * @throws CollectionException
+     */
+    public function customView($name)
+    {
+        return $this->_setView($name, true);
+    }
+
+    /**
+     * Sets view name for further rendering
+     *
+     * @param string $name
+     * @param bool $custom
+     * @return $this
+     * @throws CollectionException
+     */
+    private function _setView($name, $custom = false)
+    {
+        if (!is_string($name)) {
+            throw new CollectionException('View name must be a string.');
+        }
+
+        $this->_viewName = (!$custom ? 'resource-table::' : '').$name;
         return $this;
     }
 

@@ -44,7 +44,56 @@ class Table
      */
     public function make()
     {
-        return view('resource-table::table', $this->_dataForView());
+        return view($this->_config['view_name'], $this->_dataForView());
+    }
+
+    /**
+     * Returns table head
+     *
+     * @return string
+     */
+    public function head()
+    {
+        $head = '';
+        $head .= '<thead>';
+        $head .= '<tr>';
+        foreach ($this->_getColumns() as $column) {
+            $head .= '<th>';
+            $head .= $column->content();
+            $head .= '</th>';
+        }
+        $head .= '</tr>';
+        $head .= '</thead>';
+        return $head;
+    }
+
+    /**
+     * Returns table body
+     *
+     * @return string
+     */
+    public function body()
+    {
+        $columns = $this->_getColumns();
+
+        $body = '';
+        $body .= '<tbody>';
+        if (empty($this->_collection)) {
+            $body .= '<tr><td colspan="'.count($columns).'">No records found.</td></tr>';
+        } else {
+            foreach ($this->_collection as $row) {
+                $body .= '<tr>';
+                foreach ($columns as $column) {
+                    $body .= '<td>';
+                    $body .= $column->content($row);
+                    $body .= '</td>';
+                }
+                $body .= '</tr>';
+            }
+        }
+        $body .= '</tbody>';
+
+        return $body;
     }
 
     /**
@@ -56,7 +105,7 @@ class Table
     {
         $columns = [];
         foreach ($this->_config['columns'] as $data) {
-            $columns[] = new Column($data);
+            $columns[] = new Column($data, $this->_config['view_name']);
         }
         return $columns;
     }
@@ -72,6 +121,7 @@ class Table
             'columns'    => $this->_getColumns(),
             'collection' => $this->_collection,
             'paginator'  => $this->_config['paginator_presenter'],
+            'table'      => $this,
         ];
     }
 }
