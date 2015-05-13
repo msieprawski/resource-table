@@ -314,7 +314,18 @@ class Collection
             return null;
         }
 
+        $params = Input::get();
+        if (!empty($params)) {
+            // There are parameters in the URL - pass them to paginator
+            if (isset($params['page'])) {
+                // We don't need that - paginator will add new one
+                unset($params['page']);
+            }
+        }
+
+        // Prepare paginator and pass it to presenter
         $paginator = new LengthAwarePaginator($items, $this->_totalItems, $this->_perPage, $this->_page);
+        $paginator->appends($params);
         return new BootstrapThreePresenter($paginator);
     }
 }
