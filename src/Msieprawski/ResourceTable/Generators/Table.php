@@ -71,6 +71,7 @@ class Table
         return [
             'columns'    => $this->_getColumns(),
             'collection' => $this->_collection,
+            'paginator'  => $this->_config['paginator_presenter'],
         ];
     }
 }

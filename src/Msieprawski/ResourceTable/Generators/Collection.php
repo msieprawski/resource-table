@@ -1,10 +1,12 @@
 <?php namespace Msieprawski\ResourceTable\Generators;
 
+use DB;
 use Input;
 use Msieprawski\ResourceTable\Exceptions\CollectionException;
-use Msieprawski\ResourceTable\Generators\Table;
 use Msieprawski\ResourceTable\Helpers\Column;
 use Msieprawski\ResourceTable\ResourceTable;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\BootstrapThreePresenter;
 
 /**
  * Collection object which is representing given $builder's collection
@@ -48,6 +50,13 @@ class Collection
      * @var int
      */
     private $_perPage = ResourceTable::DEFAULT_PER_PAGE;
+
+    /**
+     * Will be total number of paginated items after calling _prepareBuilder method (if pagination enabled)
+     *
+     * @var int
+     */
+    private $_totalItems = 0;
 
     /**
      * Sort column and direction
@@ -148,12 +157,17 @@ class Collection
             throw new CollectionException('At least one column is required to generate a resource table.');
         }
 
+        // Prepare builder object before calling Table
         $this->_prepareBuilder();
 
-        return with(new Table($this->_builder->get(), [
-            'columns'  => $this->_columns,
-            'per_page' => $this->_perPage,
-            'paginate' => $this->_paginate,
+        // Finally execute prepared query builder
+        $items = $this->_builder->get();
+
+        return with(new Table($items, [
+            'columns'             => $this->_columns,
+            'per_page'            => $this->_perPage,
+            'paginate'            => $this->_paginate,
+            'paginator_presenter' => $this->_getPaginatorPresenter($items),
         ]))->make();
     }
 
@@ -228,7 +242,6 @@ class Collection
                 $this->_perPage = (int)$params['per_page'];
             }
 
-            $toSkip = 0;
             if (isset($params['page']) && is_numeric($params['page']) && $params['page'] > 1) {
                 // Get page from GET
                 $this->_page = (int)$params['page'];
@@ -236,6 +249,7 @@ class Collection
             $toSkip = ($this->_page * $this->_perPage) - $this->_perPage;
 
             // A the end set pagination
+            $this->_totalItems = $builder->getCountForPagination();
             $builder = $builder->skip($toSkip)->take($this->_perPage);
         }
         /*
@@ -286,5 +300,21 @@ class Collection
         }
 
         return false;
+    }
+
+    /**
+     * Returns Paginator Presenter object if pagination is enabled
+     *
+     * @param array $items
+     * @return mixed
+     */
+    private function _getPaginatorPresenter(array $items)
+    {
+        if (!$this->_paginate) {
+            return null;
+        }
+
+        $paginator = new LengthAwarePaginator($items, $this->_totalItems, $this->_perPage, $this->_page);
+        return new BootstrapThreePresenter($paginator);
     }
 }
