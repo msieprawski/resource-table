@@ -3,7 +3,6 @@
 This Laravel package has been created as a alternative for DataTable. It doesn't use AJAX or any JavaScript. It's very light and scalable. Use it for generating table with data without paying attention to searching/sorting/paginating results. It'll do it for yourself! I'll do my best to develop it all the time because I'll be using it on my projects. 
 
 ## TO DO
- - custom table layouts
  - searchable columns
  - custom pagination layouts *(not available in Laravel 5 but it'll be using this package)*
  - add some tests
