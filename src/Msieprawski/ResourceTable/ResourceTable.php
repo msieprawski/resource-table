@@ -5,7 +5,7 @@ use Msieprawski\ResourceTable\Generators\Collection;
 /**
  * Main ResourceTable Package object
  *
- * @ver 0.1
+ * @ver 0.3
  * @package Msieprawski\ResourceTable
  */
 class ResourceTable
@@ -15,6 +15,9 @@ class ResourceTable
 
     // Use this order direction when order_dir not set or invalid
     const DEFAULT_SORT_DIR = 'DESC';
+
+    // Use this if view name not provided
+    const DEFAULT_VIEW_NAME = 'resource-table::simple';
 
     /**
      * Will be "last set" Collection object after calling ResourceTable::of

@@ -7,7 +7,7 @@ use Msieprawski\ResourceTable\ResourceTable;
 /**
  * An representative object of table column
  *
- * @ver 0.1
+ * @ver 0.3
  * @package Msieprawski\ResourceTable
  */
 class Column
@@ -20,13 +20,22 @@ class Column
     private $_data;
 
     /**
+     * View name
+     *
+     * @var string
+     */
+    private $_viewName = '';
+
+    /**
      * Sets column data provided by user with addColumn method
      *
      * @param array $data
+     * @param string $viewName - used when calling content method
      */
-    public function __construct(array $data)
+    public function __construct(array $data, $viewName = '')
     {
         $this->_data = $data;
+        $this->_viewName = $viewName;
     }
 
     /**
@@ -126,6 +135,62 @@ class Column
             return ResourceTable::DEFAULT_SORT_DIR;
         }
         return $this->_sortDirection();
+    }
+
+    /**
+     * Returns column content (depends on column configuration)
+     *
+     * @param null|stdClass|array $row
+     * @return string
+     */
+    public function content($row = null)
+    {
+        if (null === $row) {
+            // Generate content for table head column
+
+            $result = $this->label();
+            if ($this->sortable()) {
+                // Column is sortable - get anchor HTML
+                $result .= $this->_getSortAnchor();
+            }
+            return $result;
+        }
+
+        if (!$this->hasRenderer()) {
+            return (string)$row->{$this->index()};
+        }
+
+        return (string)$this->renderer($row);
+    }
+
+    /**
+     * Returns column sort anchor (result depends on view name)
+     *
+     * @return string
+     */
+    private function _getSortAnchor()
+    {
+        $result = '';
+
+        /*
+         * Plain Bootstrap with glyphicons
+         */
+        if ('resource-table::bootstrap' === $this->_viewName) {
+            $result .= '<a href="'.$this->sortUrl().'" class="pull-right">';
+                $result .= '<i class="glyphicon '.($this->sortDirection() === 'DESC' ? 'glyphicon-triangle-bottom' : 'glyphicon-triangle-top').'"></i>';
+            $result .= '</a>';
+        }
+
+        /*
+         * Just simple table
+         */
+        if (!$result) {
+            $result .= '<a href="'.$this->sortUrl().'" style="font-weight:'.($this->sortActive() ? 'bold' : 'normal').'">';
+                $result .= $this->sortDirection() === 'DESC' ? '&#8595;' : '&#8593;';
+            $result .= '</a>';
+        }
+
+        return $result;
     }
 
     /**

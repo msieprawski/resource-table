@@ -3,7 +3,6 @@
 This Laravel package has been created as a alternative for DataTable. It doesn't use AJAX or any JavaScript. It's very light and scalable. Use it for generating table with data without paying attention to searching/sorting/paginating results. It'll do it for yourself! I'll do my best to develop it all the time because I'll be using it on my projects. 
 
 ## TO DO
- - custom table layouts
  - searchable columns
  - custom pagination layouts *(not available in Laravel 5 but it'll be using this package)*
  - add some tests
@@ -143,6 +142,63 @@ echo ResourceTable::of($news)
 ```
 
 Where `perPage(20)` sets resources per page. Method `page(2)` sets current page. Method `orderBy('id', 'DESC')` sets default sorting.
+
+## Templating
+Resource Table allows you to create your own templates! However if you don't need to use own templates, then you are free to use one of the following built-in views:
+ - `simple` *(default)*
+ - `bootstrap` *(supported by Bootstrap 3)*
+ - `advanced_example` - it's just a advanced template example, you can use it as a blueprint of your own one!
+
+### Using built-in table templates
+If you want to use core template just call `view()` method on your `ResourceTable` object:
+```php
+$collection = ResourceTable::of($news)
+    ->addColumn...
+    ...
+    ->view('bootstrap');
+```
+
+### Creating custom table template
+Create your own blade view file, name it as you want. For this example I named my file `my_table.blade.php` under `tables` directory.
+Let's say that I need to put custom attribute on each `<tr>` node in `<tbody>`:
+```html
+<table class="my-resource-table">
+    {!! $table->head() !!}
+    <tbody>
+    @if (empty($collection))
+        <tr><td colspan="{{ count($columns) }}">No records found.</td></tr>
+    @else
+        @foreach ($collection as $row)
+            
+            <!-- Here is my custom attribute -->
+            <tr data-id="{{ $row->id }}">
+            
+                @foreach ($columns as $column)
+                <td>{!! $column->content($row) !!}</td>
+                @endforeach
+            </tr>
+        @endforeach
+    @endif
+    </tbody>
+</table>
+@if ($paginator)
+{!! $paginator->render() !!}
+@endif
+```
+
+In every view template you are free to use following variables:
+ - `$collection` - an array with all results *(literally array with arrays)*
+ - `$columns` - an array with table columns objects (see `Msieprawski\ResourceTable\Helpers\Column` for available methods)
+ - `$paginator` - an Laravel's built-in pagination presenter (for now it's a `Illuminate\Pagination\BootstrapThreePresenter`)
+ - `$table` - table generator object (see `Msieprawski\ResourceTable\Generators\Table` for available methods)
+ 
+At the end just tell your `ResourceTable` object to use your custom template:
+```php
+$collection = ResourceTable::of($news)
+    ->addColumn...
+    ...
+    ->customView('tables.my_table');
+```
 
 ## License
 Licensed under the MIT License
