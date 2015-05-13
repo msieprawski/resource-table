@@ -11,7 +11,7 @@ use Illuminate\Pagination\BootstrapThreePresenter;
 /**
  * Collection object which is representing given $builder's collection
  *
- * @ver 0.1
+ * @ver 0.3
  * @package Msieprawski\ResourceTable
  */
 class Collection

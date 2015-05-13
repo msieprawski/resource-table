@@ -5,7 +5,7 @@ use Exception;
 /**
  * Exception throwed by Collection object
  *
- * @ver 0.1
+ * @ver 0.3
  * @package Msieprawski\ResourceTable
  */
 class CollectionException extends Exception {}
