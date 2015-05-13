@@ -33,3 +33,6 @@
         @endif
     </tbody>
 </table>
+@if ($paginator)
+{!! $paginator->render() !!}
+@endif
