@@ -5,7 +5,7 @@ use Exception;
 /**
  * Exception throwed by Table object
  *
- * @ver 0.1
+ * @ver 0.3
  * @package Msieprawski\ResourceTable
  */
 class TableException extends Exception {}

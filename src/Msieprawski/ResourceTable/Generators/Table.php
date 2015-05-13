@@ -6,7 +6,7 @@ use Msieprawski\ResourceTable\Exceptions\TableException;
 /**
  * Table object to represent a table :)
  *
- * @ver 0.1
+ * @ver 0.3
  * @package Msieprawski\ResourceTable
  */
 class Table
