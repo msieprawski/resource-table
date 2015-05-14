@@ -143,6 +143,47 @@ echo ResourceTable::of($news)
 
 Where `perPage(20)` sets resources per page. Method `page(2)` sets current page. Method `orderBy('id', 'DESC')` sets default sorting.
 
+### Example 5: Setting up the searchable columns
+Let's say your news can be `event` or `hot_topic` type.
+
+```php
+$news = DB::table('news')
+    ->select(['news.id', 'news.subject', 'news.type']);
+
+echo ResourceTable::of($news)
+    ->addColumn([
+        'index' => 'id',
+        'label' => 'ID',
+        'sortable' => true,
+    ])
+    ->addColumn([
+        'index' => 'subject',
+        'label' => 'Subject',
+        'sortable' => true,
+        'searchable' => true,
+    ])
+    ->addColumn([
+        'index' => 'type',
+        'label' => 'Type',
+        'sortable' => true,
+        'searchable' => true,
+        'type' => 'select',
+        'options' => [
+            'event' => 'Event',
+            'hot_topic' => 'Hot topic',
+        ]
+    ])
+    ->make();
+```
+
+Resource Table will generate a `thead` tag with two rows. First will contain standard `th` columns but the second one will contain text inputs or select fields *(depends on column configuration)*.
+Current Resource Table version supports following column types:
+ - string - script will be looking for value matching pattern `index LIKE '%value%'`
+ - select - script will be looking for value matching pattern `index = 'value'`
+ 
+#### Note
+Resource Table will automatically inject All option with `_all` for your all select type columns.
+
 ## Templating
 Resource Table allows you to create your own templates! However if you don't need to use own templates, then you are free to use one of the following built-in views:
  - `simple` *(default)*
@@ -162,6 +203,14 @@ $collection = ResourceTable::of($news)
 Create your own blade view file, name it as you want. For this example I named my file `my_table.blade.php` under `tables` directory.
 Let's say that I need to put custom attribute on each `<tr>` node in `<tbody>`:
 ```html
+@if ($collection_generator->renderFilterForm())
+<form method="GET" action="{{ $table->filterFormAction() }}">
+<div class="resource-table-buttons">
+    <a href="{{ $collection_generator->resetFormUrl() }}" class="btn btn-default">Reset form</a>
+    <button type="submit" class="btn btn-success">Search</button>
+</div>
+@endif
+
 <table class="my-resource-table">
     {!! $table->head() !!}
     <tbody>
@@ -181,6 +230,11 @@ Let's say that I need to put custom attribute on each `<tr>` node in `<tbody>`:
     @endif
     </tbody>
 </table>
+
+@if ($collection_generator->renderFilterForm())
+</form>
+@endif
+
 @if ($paginator)
 {!! $paginator->render() !!}
 @endif
@@ -191,6 +245,7 @@ In every view template you are free to use following variables:
  - `$columns` - an array with table columns objects (see `Msieprawski\ResourceTable\Helpers\Column` for available methods)
  - `$paginator` - an Laravel's built-in pagination presenter (for now it's a `Illuminate\Pagination\BootstrapThreePresenter`)
  - `$table` - table generator object (see `Msieprawski\ResourceTable\Generators\Table` for available methods)
+ - `$collection_generator` - collection generator object (see `Msieprawski\ResourceTable\Generators\Collection` for available methods)
  
 At the end just tell your `ResourceTable` object to use your custom template:
 ```php

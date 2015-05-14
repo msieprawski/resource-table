@@ -1,12 +1,14 @@
 <?php namespace Msieprawski\ResourceTable\Generators;
 
+use Input;
+use Request;
 use Msieprawski\ResourceTable\Helpers\Column;
 use Msieprawski\ResourceTable\Exceptions\TableException;
 
 /**
  * Table object to represent a table :)
  *
- * @ver 0.3
+ * @ver 0.4
  * @package Msieprawski\ResourceTable
  */
 class Table
@@ -56,13 +58,33 @@ class Table
     {
         $head = '';
         $head .= '<thead>';
-        $head .= '<tr>';
+        $head .= '<tr class="resource-table-headings">';
         foreach ($this->_getColumns() as $column) {
-            $head .= '<th>';
+            $head .= '<th class="'.($column->sortActive() ? 'warning' : '').'">';
             $head .= $column->content();
             $head .= '</th>';
         }
         $head .= '</tr>';
+
+        if ($this->_config['filter']) {
+            // Render row with search inputs
+            $head .= '<tr class="resource-table-filter">';
+
+            foreach ($this->_getColumns() as $column) {
+                // Render each column
+
+                if (!$column->searchable()) {
+                    // Column is not searchable - do not print form elements
+                    $head .= '<td></td>';
+                    continue;
+                }
+
+                $head .= '<td>'.$column->searchableContent().'</td>';
+            }
+
+            $head .= '</tr>';
+        }
+
         $head .= '</thead>';
         return $head;
     }
@@ -79,11 +101,16 @@ class Table
         $body = '';
         $body .= '<tbody>';
         if (empty($this->_collection)) {
+            // No results if collection is empty
             $body .= '<tr><td colspan="'.count($columns).'">No records found.</td></tr>';
         } else {
             foreach ($this->_collection as $row) {
+                // Generate each row
+
                 $body .= '<tr>';
                 foreach ($columns as $column) {
+                    // Generate each column
+
                     $body .= '<td>';
                     $body .= $column->content($row);
                     $body .= '</td>';
@@ -94,6 +121,16 @@ class Table
         $body .= '</tbody>';
 
         return $body;
+    }
+
+    /**
+     * Returns filter form URL
+     *
+     * @return string
+     */
+    public function filterFormAction()
+    {
+        return Request::url().'?'.http_build_query(Input::query());
     }
 
     /**
@@ -118,10 +155,11 @@ class Table
     private function _dataForView()
     {
         return [
-            'columns'    => $this->_getColumns(),
-            'collection' => $this->_collection,
-            'paginator'  => $this->_config['paginator_presenter'],
-            'table'      => $this,
+            'collection_generator' => $this->_config['collection_generator'],
+            'columns'              => $this->_getColumns(),
+            'collection'           => $this->_collection,
+            'paginator'            => $this->_config['paginator_presenter'],
+            'table'                => $this,
         ];
     }
 }
