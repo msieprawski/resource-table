@@ -7,7 +7,7 @@ use Msieprawski\ResourceTable\ResourceTable;
 /**
  * An representative object of table column
  *
- * @ver 0.3
+ * @ver 0.4
  * @package Msieprawski\ResourceTable
  */
 class Column
