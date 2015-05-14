@@ -56,6 +56,9 @@
     @endif
     </tbody>
 </table>
+@if ($collection_generator->renderFilterForm())
+</form>
+@endif
 @if ($paginator)
 {!! $paginator->render() !!}
 @endif
