@@ -3,7 +3,9 @@
 This Laravel package has been created as a alternative for DataTable. It doesn't use AJAX or any JavaScript. It's very light and scalable. Use it for generating table with data without paying attention to searching/sorting/paginating results. It'll do it for yourself! I'll do my best to develop it all the time because I'll be using it on my projects. 
 
 ## TO DO
- - searchable columns
+ - translations *(default and custom)*
+ - default value for searchable columns
+ - more searchable columns types *(date, datetime, range)*
  - custom pagination layouts *(not available in Laravel 5 but it'll be using this package)*
  - add some tests
  
@@ -14,6 +16,7 @@ Currently package is compatible with Laravel 5
  - supporting Eloquent ORM and Fluent Query Builder
  - ability to join tables and sort results by joined columns
  - uses built in Laravel's paginator
+ - searchable columns - select or text fields!
  - more coming...
  
 ## Installation
@@ -177,12 +180,12 @@ echo ResourceTable::of($news)
 ```
 
 Resource Table will generate a `thead` tag with two rows. First will contain standard `th` columns but the second one will contain text inputs or select fields *(depends on column configuration)*.
-Current Resource Table version supports following column types:
- - string - script will be looking for value matching pattern `index LIKE '%value%'`
+Currently Resource Table version supports following column types:
+ - string - script will be looking for value matching pattern `index LIKE '%value%'` *(used by default)*
  - select - script will be looking for value matching pattern `index = 'value'`
  
 #### Note
-Resource Table will automatically inject All option with `_all` for your all select type columns.
+Resource Table will automatically inject `All` option with `_all` key to your all select type columns.
 
 ## Templating
 Resource Table allows you to create your own templates! However if you don't need to use own templates, then you are free to use one of the following built-in views:
