@@ -174,6 +174,109 @@ class Column
     }
 
     /**
+     * Returns column search type (if valid and provided)
+     *
+     * @return string
+     */
+    public function searchType()
+    {
+        return isset($this->_data['type']) && ResourceTable::validColumnType($this->_data['type']) ? $this->_data['type'] : ResourceTable::DEFAULT_COLUMN_TYPE;
+    }
+
+    /**
+     * Returns column array with options for searchable form
+     *
+     * @return array
+     */
+    public function options()
+    {
+        if (!isset($this->_data['options']) || (isset($this->_data['options']) && empty($this->_data['options']))) {
+            // No options provided
+            return [];
+        }
+        if (!is_array($this->_data['options'])) {
+            // An empty array?
+            return [];
+        }
+
+        return array_merge([ResourceTable::ALL_SELECT_VALUES_KEY => 'All'], $this->_data['options']);
+    }
+
+    /**
+     * Returns HTML with column search field
+     *
+     * @return string
+     */
+    public function searchableContent()
+    {
+        $result = '';
+        $type = $this->searchType();
+
+        /*
+         * Plain Bootstrap with glyphicons
+         */
+        if ('resource-table::bootstrap' === $this->_viewName) {
+            switch ($type) {
+
+                // Select
+                case 'select':
+                    if (!count($this->options())) {
+                        // Options must be provided for select
+                        return '';
+                    }
+                    $result .= '<select name="resource_table_'.$this->index().'" class="form-control resource-table-column-filter">'.$this->_optionsHTML().'</select>';
+                    break;
+
+                // Simple string input
+                case 'string':
+                default:
+                    $result .= '<input type="text" placeholder="Search for '.$this->label().'" class="form-control resource-table-column-filter" name="resource_table_'.$this->index().'" value="'.ResourceTable::getSearchValue($this->index()).'" />';
+                    break;
+            }
+        }
+
+        /*
+         * Just simple table
+         */
+        if (!$result) {
+            switch ($type) {
+
+                // Select
+                case 'select':
+                    if (!count($this->options())) {
+                        // Options must be provided for select
+                        return '';
+                    }
+                    $result .= '<select name="resource_table_'.$this->index().'" class="resource-table-column-filter">'.$this->_optionsHTML().'</select>';
+                    break;
+
+                // Simple string input
+                case 'string':
+                default:
+                    $result .= '<input type="text" class="resource-table-column-filter" name="resource_table_'.$this->index().'" value="'.ResourceTable::getSearchValue($this->index()).'" />';
+                    break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns HTML with select options for searchable column
+     *
+     * @return string
+     */
+    private function _optionsHTML()
+    {
+        $result = '';
+        foreach ($this->options() as $key => $label) {
+            $selected = ResourceTable::getSearchValue($this->index()) == $key ? ' selected="selected"' : '';
+            $result .= '<option value="'.$key.'"'.$selected.'>'.$label.'</option>';
+        }
+        return $result;
+    }
+
+    /**
      * Returns column sort anchor (result depends on view name)
      *
      * @return string

@@ -2,6 +2,7 @@
 
 use DB;
 use Input;
+use Request;
 use Msieprawski\ResourceTable\Exceptions\CollectionException;
 use Msieprawski\ResourceTable\Helpers\Column;
 use Msieprawski\ResourceTable\ResourceTable;
@@ -77,14 +78,7 @@ class Collection
      *
      * @var bool
      */
-    private $_columnsFilter = ResourceTable::DEFAULT_COLUMNS_FILTER;
-
-    /**
-     * Determine if global filter (search input) should be rendered or not
-     *
-     * @var bool
-     */
-    private $_globalFilter = ResourceTable::DEFAULT_GLOBAL_FILTER;
+    private $_filter = ResourceTable::DEFAULT_FILTER;
 
     /**
      * Sets builder object
@@ -185,16 +179,37 @@ class Collection
         $items = $this->_builder->get();
 
         return with(new Table($items, [
-            'columns'             => $this->_columns,
-            'per_page'            => $this->_perPage,
-            'paginate'            => $this->_paginate,
-            'paginator_presenter' => $this->_getPaginatorPresenter($items),
-            'view_name'           => $this->_viewName,
-            'filter'              => [
-                'global'  => $this->_globalFilter,
-                'columns' => $this->_columnsFilter,
-            ],
+            'collection_generator' => $this,
+            'columns'              => $this->_columns,
+            'per_page'             => $this->_perPage,
+            'paginate'             => $this->_paginate,
+            'paginator_presenter'  => $this->_getPaginatorPresenter($items),
+            'view_name'            => $this->_viewName,
+            'filter'               => $this->_filter,
         ]))->make();
+    }
+
+    /**
+     * Checks if filter form should be generated
+     *
+     * @return bool
+     */
+    public function renderFilterForm()
+    {
+        if (!$this->_filter) {
+            // Disabled
+            return false;
+        }
+
+        foreach ($this->_columns as $columnData) {
+            $column = new Column($columnData);
+            if ($column->searchable()) {
+                // At least one column is searchable - form should be generated
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -268,37 +283,46 @@ class Collection
     }
 
     /**
-     * Sets true if column filter should be rendered
+     * Sets true if filter should be rendered
      *
      * @param bool $enabled
      * @return $this
      * @throws CollectionException
      */
-    public function columnsFilter($enabled)
+    public function filter($enabled)
     {
         if (!is_bool($enabled)) {
-            throw new CollectionException('Columns filter must be enabled or disabled. Bool is required.');
+            throw new CollectionException('Filter must be enabled or disabled. Bool is required.');
         }
 
-        $this->_columnsFilter = $enabled;
+        $this->_filter = $enabled;
         return $this;
     }
 
     /**
-     * Sets true if global filter should be rendered
+     * Returns URL to reset search form
      *
-     * @param bool $enabled
-     * @return $this
-     * @throws CollectionException
+     * @return string
      */
-    public function globalFilter($enabled)
+    public function resetFormUrl()
     {
-        if (!is_bool($enabled)) {
-            throw new CollectionException('Global filter must be enabled or disabled. Bool is required.');
+        $params = Input::get();
+
+        $fieldsToReset = [];
+        foreach ($this->_columns as $columnData) {
+            // Add each column to reset
+            $column = new Column($columnData);
+            $fieldsToReset[] = 'resource_table_'.$column->index();
         }
 
-        $this->_globalFilter = $enabled;
-        return $this;
+        // Now remove all fields to reset from GET query
+        foreach ($fieldsToReset as $fieldName) {
+            if (isset($params[$fieldName])) {
+                unset($params[$fieldName]);
+            }
+        }
+
+        return Request::url().'?'.http_build_query($params);
     }
 
     /**
@@ -334,6 +358,51 @@ class Collection
     {
         $builder = $this->_builder;
         $params = Input::get();
+
+        /*
+         * START filters
+         */
+        if ($this->renderFilterForm()) {
+            foreach ($this->_columns as $columnData) {
+                $column = new Column($columnData);
+                if (!$column->searchable()) {
+                    // Not a searchable column - skip it
+                    continue;
+                }
+
+                if (!isset($params['resource_table_'.$column->index()])) {
+                    // Searched string not found in GET query
+                    continue;
+                }
+
+                $value = $params['resource_table_'.$column->index()];
+                if (!$value || !is_string($value)) {
+                    // Skip empty values
+                    continue;
+                }
+
+                switch ($column->searchType()) {
+
+                    // Use simple WHERE = 'value' for selects
+                    case 'select':
+                        if (ResourceTable::ALL_SELECT_VALUES_KEY == $value) {
+                            // Any value in select - skip it
+                            continue;
+                        }
+                        $builder = $builder->where($column->index(), '=', $value);
+                        break;
+
+                    // Use LIKE '%value' for strings
+                    case 'string':
+                    default:
+                        $builder = $builder->where($column->index(), 'LIKE', '%'.$value.'%');
+                        break;
+                }
+            }
+        }
+        /*
+         * END filters
+         */
 
         /*
          * START pagination

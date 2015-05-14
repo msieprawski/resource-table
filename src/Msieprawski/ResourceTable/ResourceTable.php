@@ -1,5 +1,6 @@
 <?php namespace Msieprawski\ResourceTable;
 
+use Input;
 use Msieprawski\ResourceTable\Generators\Collection;
 
 /**
@@ -19,11 +20,14 @@ class ResourceTable
     // Use this if view name not provided
     const DEFAULT_VIEW_NAME = 'resource-table::simple';
 
-    // Use this as a default global filter value
-    const DEFAULT_GLOBAL_FILTER = true;
+    // Use this to determine if search form is enabled by default
+    const DEFAULT_FILTER = true;
 
-    // Use this as a default column filter value
-    const DEFAULT_COLUMNS_FILTER = true;
+    // Use this if column type (type property) not provided
+    const DEFAULT_COLUMN_TYPE = 'string';
+
+    // Used in GET query for all values (for select columns)
+    const ALL_SELECT_VALUES_KEY = '_all';
 
     /**
      * Will be "last set" Collection object after calling ResourceTable::of
@@ -57,5 +61,30 @@ class ResourceTable
     public static function collection()
     {
         return self::$_lastCollection;
+    }
+
+    /**
+     * Returns array with valid column type options
+     *
+     * @param string $type
+     * @return bool
+     */
+    public static function validColumnType($type)
+    {
+        return in_array($type, [
+            'string', 'select',
+        ]);
+    }
+
+    /**
+     * Returns search form default value
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public static function getSearchValue($name)
+    {
+        $getName = 'resource_table_'.$name;
+        return Input::get($getName);
     }
 }
