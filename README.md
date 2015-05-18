@@ -187,7 +187,7 @@ Currently Resource Table version supports following column types:
 Resource Table will automatically inject `All` option with `_all` key to your all select type columns.
 
 ## Creating pagination presenters
-Let's say you don't want to use default built-in Bootstrap 3 pagination HTML structure for your pagination. ResourceTable has built-in `AdminLTEPresenter` so if you'are using Admin LTE Admin Theme you don't have to worry about pagination HTML!
+Let's say you don't want to use default built-in Bootstrap 3 pagination HTML structure for your pagination. With ResourceTable you can create your own one or use built-in `AdminLTEPresenter`. So if you'are using Admin LTE Admin Theme you don't have to worry about pagination HTML!
 By default ResourceTable use Bootstrap 3 presenter which is default for Laravel 5.
 
 ### Using Admin LTE pagination presenter
@@ -217,7 +217,7 @@ class MyCustomPresenter extends DefaultPresenter
     }
 }
 ```
-All of your custom presenters must extends `DefaultPresenter` class. Feel free to see how it works *(it's strongly based on Laravel's BootstrapThreePreseter)*. Just copy method which is responsible for element that you want to customize and change it! That's it!
+All of your custom presenters must extends `DefaultPresenter` class. Feel free to see how it works *(it's strongly based on Laravel's BootstrapThreePresenter)*. Just copy method which is responsible for element that you want to customize and change it! That's it!
 
 After creating your custom presenter - don't forget to set it in `ResourceTable`:
 ```php
