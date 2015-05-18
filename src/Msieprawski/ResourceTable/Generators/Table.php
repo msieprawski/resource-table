@@ -8,7 +8,6 @@ use Msieprawski\ResourceTable\Exceptions\TableException;
 /**
  * Table object to represent a table :)
  *
- * @ver 0.4
  * @package Msieprawski\ResourceTable
  */
 class Table
@@ -102,7 +101,7 @@ class Table
         $body .= '<tbody>';
         if (empty($this->_collection)) {
             // No results if collection is empty
-            $body .= '<tr><td colspan="'.count($columns).'">No records found.</td></tr>';
+            $body .= '<tr><td colspan="'.count($columns).'">'.trans('resource-table::default.No_records').'</td></tr>';
         } else {
             foreach ($this->_collection as $row) {
                 // Generate each row

@@ -24,6 +24,8 @@ class ResourceTableServiceProvider extends ServiceProvider
         $this->publishes([
             $views => base_path('resources/views/vendor/msieprawski/resource-table'),
         ]);
+
+        $this->loadTranslationsFrom(__DIR__.'/lang', 'resource-table');
     }
 
 	/**

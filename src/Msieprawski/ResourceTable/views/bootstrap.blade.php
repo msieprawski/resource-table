@@ -3,8 +3,8 @@
 <div class="row">
     <div class="pull-right">
         <div class="btn-group" role="group">
-            <a href="{{ $collection_generator->resetFormUrl() }}" class="btn btn-default">Reset form</a>
-            <button type="submit" class="btn btn-success">Search</button>
+            <a href="{{ $collection_generator->resetFormUrl() }}" class="btn btn-default">{{ trans('resource-table::default.Reset_form') }}</a>
+            <button type="submit" class="btn btn-success">{{ trans('resource-table::default.Search') }}</button>
         </div>
     </div>
 </div>

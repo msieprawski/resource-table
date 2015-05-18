@@ -3,8 +3,8 @@
 <div class="row">
     <div class="pull-right">
         <div class="btn-group" role="group">
-            <a href="{{ $collection_generator->resetFormUrl() }}" class="btn btn-default">Reset form</a>
-            <button type="submit" class="btn btn-success">Search</button>
+            <a href="{{ $collection_generator->resetFormUrl() }}" class="btn btn-default">{{ trans('resource-table::default.Reset_form') }}</a>
+            <button type="submit" class="btn btn-success">{{ trans('resource-table::default.Search') }}</button>
         </div>
     </div>
 </div>
@@ -38,7 +38,7 @@
     </thead>
     <tbody>
     @if (empty($collection))
-        <tr><td colspan="{{ count($columns) }}">No records found.</td></tr>
+        <tr><td colspan="{{ count($columns) }}">{{ trans('resource-table::default.No_records') }}</td></tr>
     @else
         @foreach ($collection as $row)
         <tr>
