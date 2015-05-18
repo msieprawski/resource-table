@@ -199,7 +199,7 @@ class Column
             return [];
         }
 
-        return array_merge([ResourceTable::ALL_SELECT_VALUES_KEY => 'All'], $this->_data['options']);
+        return array_merge([ResourceTable::ALL_SELECT_VALUES_KEY => trans('resource-table::default.All')], $this->_data['options']);
     }
 
     /**
@@ -231,7 +231,7 @@ class Column
                 // Simple string input
                 case 'string':
                 default:
-                    $result .= '<input type="text" placeholder="'.array_get($config, 'placeholder', 'Search for '.$this->label()).'" class="'.array_get($config, 'control_class', 'form-control input-sm').' resource-table-column-filter" name="resource_table_'.$this->index().'" value="'.ResourceTable::getSearchValue($this->index()).'" />';
+                    $result .= '<input type="text" placeholder="'.array_get($config, 'placeholder', trans('resource-table::default.Search_for').' '.$this->label()).'" class="'.array_get($config, 'control_class', 'form-control input-sm').' resource-table-column-filter" name="resource_table_'.$this->index().'" value="'.ResourceTable::getSearchValue($this->index()).'" />';
                     break;
             }
         }

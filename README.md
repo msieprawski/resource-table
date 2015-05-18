@@ -3,7 +3,6 @@
 This Laravel package has been created as a alternative for DataTable. It doesn't use AJAX or any JavaScript. It's very light and scalable. Use it for generating table with data without paying attention to searching/sorting/paginating results. It'll do it for yourself! I'll do my best to develop it all the time because I'll be using it on my projects. 
 
 ## TO DO
- - translations *(default and custom)*
  - default value for searchable columns
  - more searchable columns types *(date, datetime, range)*
  - add some tests
@@ -16,6 +15,7 @@ Currently package is compatible with Laravel 5
  - ability to join tables and sort results by joined columns
  - searchable columns - select or text fields!
  - custom pagination layouts *(called presenters in Laravel 5)*
+ - translations
  - more coming...
  
 ## Installation
@@ -139,7 +139,10 @@ echo ResourceTable::of($news)
     ])
     ->perPage(20)
     ->page(2)
-    ->orderBy('id', 'DESC')
+    ->paginate(true)
+    ->sort('id', 'DESC')
+    ->filter(true)
+    ->customView('my.custom.view.name')
     ->make();
 ```
 
@@ -326,6 +329,21 @@ public function boot()
     ResourceTable::setView('bootstrap')
     ResourceTable::setPaginationPresenter('App\Presenters\MyCustomPresenter')
 }
+```
+
+## Translations
+ResourceTable has built-in polish and english translations. Please contact me if you've created translations for more languages - I'll be happy to share it with others!
+If you want to use your own translations or override existing please follow Laravel's instructions available [here](http://laravel.com/docs/5.0/localization#overriding-package-language-files). Please use `resource-table` as package name and `default.php` as translations file.
+```php
+<?php
+
+return [
+    'No_records' => 'No records found.',
+    'Search' => 'Search',
+    'Reset_form' => 'Reset form',
+    'All' => 'All',
+    'Search_for' => 'Search for',
+];
 ```
 
 ## License
