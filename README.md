@@ -258,5 +258,17 @@ $collection = ResourceTable::of($news)
     ->customView('tables.my_table');
 ```
 
+### Auto-generated searchable for column
+Let's say you want to use `$column->searchableContent()` in our custom template but you want to add custom class for every input or placeholder. It's very easy:
+```php
+@foreach ($columns as $column)
+    @if (!$column->searchable())
+    <td></td>
+    @else
+    <td>{!! $column->searchableContent(['control_class' => 'form-control input-sm my-custom-class', 'placeholder' => 'Custom placeholder for '.$column->label()]) !!}</td>
+    @endif
+@endforeach
+```
+
 ## License
 Licensed under the MIT License
