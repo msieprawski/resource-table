@@ -6,7 +6,7 @@ use Msieprawski\ResourceTable\Generators\Collection;
 /**
  * Main ResourceTable Package object
  *
- * @ver 0.4
+ * @ver 0.5
  * @package Msieprawski\ResourceTable
  */
 class ResourceTable

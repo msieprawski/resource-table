@@ -11,7 +11,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 /**
  * Collection object which is representing given $builder's collection
  *
- * @ver 0.4
  * @package Msieprawski\ResourceTable
  */
 class Collection
