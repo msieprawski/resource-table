@@ -205,9 +205,10 @@ class Column
     /**
      * Returns HTML with column search field
      *
+     * @param array $config
      * @return string
      */
-    public function searchableContent()
+    public function searchableContent(array $config = array())
     {
         $result = '';
         $type = $this->searchType();
@@ -224,13 +225,13 @@ class Column
                         // Options must be provided for select
                         return '';
                     }
-                    $result .= '<select name="resource_table_'.$this->index().'" class="form-control resource-table-column-filter">'.$this->_optionsHTML().'</select>';
+                    $result .= '<select name="resource_table_'.$this->index().'" class="'.array_get($config, 'control_class', 'form-control').' resource-table-column-filter">'.$this->_optionsHTML().'</select>';
                     break;
 
                 // Simple string input
                 case 'string':
                 default:
-                    $result .= '<input type="text" placeholder="Search for '.$this->label().'" class="form-control resource-table-column-filter" name="resource_table_'.$this->index().'" value="'.ResourceTable::getSearchValue($this->index()).'" />';
+                    $result .= '<input type="text" placeholder="'.array_get($config, 'placeholder', 'Search for '.$this->label()).'" class="'.array_get($config, 'control_class', 'form-control').' resource-table-column-filter" name="resource_table_'.$this->index().'" value="'.ResourceTable::getSearchValue($this->index()).'" />';
                     break;
             }
         }
@@ -247,13 +248,13 @@ class Column
                         // Options must be provided for select
                         return '';
                     }
-                    $result .= '<select name="resource_table_'.$this->index().'" class="resource-table-column-filter">'.$this->_optionsHTML().'</select>';
+                    $result .= '<select name="resource_table_'.$this->index().'" class="'.array_get($config, 'control_class').' resource-table-column-filter">'.$this->_optionsHTML().'</select>';
                     break;
 
                 // Simple string input
                 case 'string':
                 default:
-                    $result .= '<input type="text" class="resource-table-column-filter" name="resource_table_'.$this->index().'" value="'.ResourceTable::getSearchValue($this->index()).'" />';
+                    $result .= '<input type="text" class="'.array_get($config, 'control_class').' resource-table-column-filter" name="resource_table_'.$this->index().'" value="'.ResourceTable::getSearchValue($this->index()).'" placeholder="'.array_get($config, 'placeholder').'" />';
                     break;
             }
         }
@@ -290,7 +291,7 @@ class Column
          */
         if ('resource-table::bootstrap' === $this->_viewName) {
             $result .= '<a href="'.$this->sortUrl().'" class="pull-right">';
-                $result .= '<i class="glyphicon '.($this->sortDirection() === 'DESC' ? 'glyphicon-triangle-bottom' : 'glyphicon-triangle-top').'"></i>';
+            $result .= '<i class="glyphicon '.($this->sortDirection() === 'DESC' ? 'glyphicon-triangle-bottom' : 'glyphicon-triangle-top').'"></i>';
             $result .= '</a>';
         }
 
@@ -299,7 +300,7 @@ class Column
          */
         if (!$result) {
             $result .= '<a href="'.$this->sortUrl().'" style="font-weight:'.($this->sortActive() ? 'bold' : 'normal').'">';
-                $result .= $this->sortDirection() === 'DESC' ? '&#8595;' : '&#8593;';
+            $result .= $this->sortDirection() === 'DESC' ? '&#8595;' : '&#8593;';
             $result .= '</a>';
         }
 
