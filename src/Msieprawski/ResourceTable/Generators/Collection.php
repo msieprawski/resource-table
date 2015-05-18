@@ -7,7 +7,6 @@ use Msieprawski\ResourceTable\Exceptions\CollectionException;
 use Msieprawski\ResourceTable\Helpers\Column;
 use Msieprawski\ResourceTable\ResourceTable;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\BootstrapThreePresenter;
 
 /**
  * Collection object which is representing given $builder's collection
@@ -81,6 +80,13 @@ class Collection
     private $_filter = ResourceTable::DEFAULT_FILTER;
 
     /**
+     * Pagination presenter object name
+     *
+     * @var string
+     */
+    private $_paginationPresenter = ResourceTable::DEFAULT_PAGINATION_PRESENTER;
+
+    /**
      * Sets builder object
      *
      * @param \Illuminate\Database\Query\Builder $builder
@@ -88,6 +94,18 @@ class Collection
     public function __construct(\Illuminate\Database\Query\Builder $builder)
     {
         $this->_builder = $builder;
+    }
+
+    /**
+     * Sets $_paginationPresenter object name
+     *
+     * @param string $presenter
+     * @return $this
+     */
+    public function setPaginationPresenter($presenter)
+    {
+        $this->_paginationPresenter = $presenter;
+        return $this;
     }
 
     /**
@@ -497,6 +515,6 @@ class Collection
         // Prepare paginator and pass it to presenter
         $paginator = new LengthAwarePaginator($items, $this->_totalItems, $this->_perPage, $this->_page);
         $paginator->appends($params);
-        return new BootstrapThreePresenter($paginator);
+        return new $this->_paginationPresenter($paginator);
     }
 }

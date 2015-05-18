@@ -29,6 +29,9 @@ class ResourceTable
     // Used in GET query for all values (for select columns)
     const ALL_SELECT_VALUES_KEY = '_all';
 
+    // Use this as a default pagination presenter
+    const DEFAULT_PAGINATION_PRESENTER = 'Illuminate\Pagination\BootstrapThreePresenter';
+
     /**
      * Will be "last set" Collection object after calling ResourceTable::of
      *
