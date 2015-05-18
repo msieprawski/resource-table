@@ -310,5 +310,23 @@ Let's say you want to use `$column->searchableContent()` in your custom template
 @endforeach
 ```
 
+## Setting default configuration for each ResourceTable object
+If you want to set `bootstrap` view for each ResourceTable object or you want to set 100 elements per page you can use ResourceTable available static functions:
+  - `ResourceTable::setPaginationPresenter()` - set custom or buil-in pagination presenter object name
+  - `ResourceTable::setView()` - use this if you want to use buil-in template
+  - `ResourceTable::setCustomView()` - use this if you've created your own template
+  - `ResourceTable::setPaginate()` - enable/disable pagination
+  - `ResourceTable::setPerPage()` - how many results to display on page
+  - `ResourceTable::setPage()` - hardcode specific page *(not sure why I've created this)*
+  - `ResourceTable::setFilter()` - enable/disable results filter
+You can call it within `boot` method in `AppServiceProvider` object:
+```php
+public function boot()
+{
+    ResourceTable::setView('bootstrap')
+    ResourceTable::setPaginationPresenter('App\Presenters\MyCustomPresenter')
+}
+```
+
 ## License
 Licensed under the MIT License
