@@ -1,6 +1,5 @@
 <?php namespace Msieprawski\ResourceTable\Generators;
 
-use DB;
 use Input;
 use Request;
 use Msieprawski\ResourceTable\Exceptions\CollectionException;
@@ -512,7 +511,9 @@ class Collection
         }
 
         // Prepare paginator and pass it to presenter
-        $paginator = new LengthAwarePaginator($items, $this->_totalItems, $this->_perPage, $this->_page);
+        $paginator = new LengthAwarePaginator($items, $this->_totalItems, $this->_perPage, $this->_page, [
+            'path' => Request::url(),
+        ]);
         $paginator->appends($params);
         return new $this->_paginationPresenter($paginator);
     }
