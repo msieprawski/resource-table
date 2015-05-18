@@ -225,13 +225,13 @@ class Column
                         // Options must be provided for select
                         return '';
                     }
-                    $result .= '<select name="resource_table_'.$this->index().'" class="'.array_get($config, 'control_class', 'form-control').' resource-table-column-filter">'.$this->_optionsHTML().'</select>';
+                    $result .= '<select name="resource_table_'.$this->index().'" class="'.array_get($config, 'control_class', 'form-control input-sm').' resource-table-column-filter">'.$this->_optionsHTML().'</select>';
                     break;
 
                 // Simple string input
                 case 'string':
                 default:
-                    $result .= '<input type="text" placeholder="'.array_get($config, 'placeholder', 'Search for '.$this->label()).'" class="'.array_get($config, 'control_class', 'form-control').' resource-table-column-filter" name="resource_table_'.$this->index().'" value="'.ResourceTable::getSearchValue($this->index()).'" />';
+                    $result .= '<input type="text" placeholder="'.array_get($config, 'placeholder', 'Search for '.$this->label()).'" class="'.array_get($config, 'control_class', 'form-control input-sm').' resource-table-column-filter" name="resource_table_'.$this->index().'" value="'.ResourceTable::getSearchValue($this->index()).'" />';
                     break;
             }
         }
@@ -291,7 +291,12 @@ class Column
          */
         if ('resource-table::bootstrap' === $this->_viewName) {
             $result .= '<a href="'.$this->sortUrl().'" class="pull-right">';
-            $result .= '<i class="glyphicon '.($this->sortDirection() === 'DESC' ? 'glyphicon-triangle-bottom' : 'glyphicon-triangle-top').'"></i>';
+            $glyphicon = 'glyphicon-sort';
+            if ($this->sortActive()) {
+                // Column is active - we can show proper icon
+                $glyphicon = $this->sortDirection() === 'DESC' ? 'glyphicon-sort-by-attributes' : 'glyphicon-sort-by-attributes-alt';
+            }
+            $result .= '<i class="glyphicon '.$glyphicon.'"></i>';
             $result .= '</a>';
         }
 
