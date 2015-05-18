@@ -6,7 +6,6 @@ This Laravel package has been created as a alternative for DataTable. It doesn't
  - translations *(default and custom)*
  - default value for searchable columns
  - more searchable columns types *(date, datetime, range)*
- - custom pagination layouts *(not available in Laravel 5 but it'll be using this package)*
  - add some tests
  
 ## Compatibility
@@ -15,8 +14,8 @@ Currently package is compatible with Laravel 5
 ## Feature overview
  - supporting Eloquent ORM and Fluent Query Builder
  - ability to join tables and sort results by joined columns
- - uses built in Laravel's paginator
  - searchable columns - select or text fields!
+ - custom pagination layouts *(called presenters in Laravel 5)*
  - more coming...
  
 ## Installation
@@ -186,6 +185,47 @@ Currently Resource Table version supports following column types:
  
 #### Note
 Resource Table will automatically inject `All` option with `_all` key to your all select type columns.
+
+## Creating pagination presenters
+Let's say you don't want to use default built-in Bootstrap 3 pagination HTML structure for your pagination. ResourceTable has built-in `AdminLTEPresenter` so if you'are using Admin LTE Admin Theme you don't have to worry about pagination HTML!
+By default ResourceTable use Bootstrap 3 presenter which is default for Laravel 5.
+
+### Using Admin LTE pagination presenter
+```php
+$collection = ResourceTable::of($news)
+    ->addColumn...
+    ...
+    ->setPaginationPresenter('Msieprawski\ResourceTable\Presenters\AdminLTEPresenter');
+```
+
+#### Note
+Remember to use full path to class!
+
+### Creating your own pagination presenter
+You can create your pagination presenter wherever you want but it's recommended to create `Presenters` directory under your `app` directory. For this example I created `MyCustomPresenter` under `app/Presenters` directory:
+```php
+<?php namespace App\Presenters;
+
+use Msieprawski\ResourceTable\Presenters\DefaultPresenter;
+
+class MyCustomPresenter extends DefaultPresenter
+{
+    protected function getAvailablePageWrapper($url, $page, $rel = null)
+    {
+        $rel = is_null($rel) ? '' : ' rel="'.$rel.'"';
+        return '<li class="my-custom-class-here"><a href="'.htmlentities($url).'"'.$rel.'>'.$page.'</a></li>';
+    }
+}
+```
+All of your custom presenters must extends `DefaultPresenter` class. Feel free to see how it works *(it's strongly based on Laravel's BootstrapThreePreseter)*. Just copy method which is responsible for element that you want to customize and change it! That's it!
+
+After creating your custom presenter - don't forget to set it in `ResourceTable`:
+```php
+$collection = ResourceTable::of($news)
+    ->addColumn...
+    ...
+    ->setPaginationPresenter('App\Presenters\MyCustomPresenter');
+```
 
 ## Templating
 Resource Table allows you to create your own templates! However if you don't need to use own templates, then you are free to use one of the following built-in views:
