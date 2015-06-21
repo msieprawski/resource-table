@@ -159,6 +159,7 @@ class Table
             'collection'           => $this->_collection,
             'paginator'            => $this->_config['paginator_presenter'],
             'table'                => $this,
+            'extra'                => $this->_config['extra'],
         ];
     }
 }
