@@ -85,6 +85,13 @@ class Collection
     private $_paginationPresenter = ResourceTable::DEFAULT_PAGINATION_PRESENTER;
 
     /**
+     * An extra (custom) data for table view
+     *
+     * @var array
+     */
+    private $_extraViewData = [];
+
+    /**
      * Sets builder object
      *
      * @param \Illuminate\Database\Query\Builder $builder
@@ -202,6 +209,7 @@ class Collection
             'paginator_presenter'  => $this->_getPaginatorPresenter($items),
             'view_name'            => $this->_viewName,
             'filter'               => $this->_filter,
+            'extra'                => $this->_extraViewData,
         ]))->make();
     }
 
@@ -268,6 +276,18 @@ class Collection
     public function customView($name)
     {
         return $this->_setView($name, true);
+    }
+
+    /**
+     * Sets extra (custom) view data
+     *
+     * @param array $data
+     * @return $this
+     */
+    public function setExtraViewData(array $data)
+    {
+        $this->_extraViewData = $data;
+        return $this;
     }
 
     /**
