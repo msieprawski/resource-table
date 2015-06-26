@@ -198,7 +198,7 @@ class Column
             return [];
         }
 
-        return array_merge([ResourceTable::ALL_SELECT_VALUES_KEY => trans('resource-table::default.All')], $this->_data['options']);
+        return ([ResourceTable::ALL_SELECT_VALUES_KEY => trans('resource-table::default.All')] + $this->_data['options']);
     }
 
     /**
