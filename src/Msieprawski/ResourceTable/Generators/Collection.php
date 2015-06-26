@@ -379,7 +379,11 @@ class Collection
         }
 
         if (isset($data['renderer']) && !$data['renderer'] instanceof \Closure) {
-            return 'Renderer must be instance of Closure object.';
+            return 'Renderer function must be instance of Closure object.';
+        }
+
+        if (isset($data['filter']) && !$data['filter'] instanceof \Closure) {
+            return 'Filter function must be instance of Closure object.';
         }
 
         return true;
@@ -417,6 +421,7 @@ class Collection
                     continue;
                 }
 
+                $value = $this->_prepareFilterValue($columnData, $value);
                 switch ($column->searchType()) {
 
                     // Use simple WHERE = 'value' for selects
@@ -481,6 +486,25 @@ class Collection
          */
 
         $this->_builder = $builder;
+    }
+
+    /**
+     * Basing on column configuration prepares given field value
+     * If column configuration has filter function - use it to prepare value
+     *
+     * @param array $column
+     * @param mixed $value
+     * @return mixed
+     */
+    private function _prepareFilterValue(array $column, $value)
+    {
+        if (!isset($column['filter'])) {
+            // There is no filter function so we'll search for plain value
+            return $value;
+        }
+
+        // Filter function found - lets use it!
+        return $column['filter']($value);
     }
 
     /**
