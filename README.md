@@ -14,6 +14,7 @@ Currently package is compatible with Laravel 5
  - supporting Eloquent ORM and Fluent Query Builder
  - ability to join tables and sort results by joined columns
  - searchable columns - select or text fields!
+ - supporting filter callbacks
  - custom pagination layouts *(called presenters in Laravel 5)*
  - translations
  - more coming...
@@ -177,6 +178,26 @@ echo ResourceTable::of($news)
             'event' => 'Event',
             'hot_topic' => 'Hot topic',
         ]
+    ])
+    ->make();
+```
+
+### Example 6: Custom filter logic
+
+```php
+$news = DB::table('news')
+    ->select(['news.subject']);
+
+echo ResourceTable::of($news)
+    ->addColumn([
+        'index' => 'subject',
+        'label' => 'Subject',
+        'sortable' => true,
+        'searchable' => true,
+        'filter' => function($value) {
+            // Do whatever you want with given value!
+            return trim(mb_strtolower(($value));
+        }
     ])
     ->make();
 ```
