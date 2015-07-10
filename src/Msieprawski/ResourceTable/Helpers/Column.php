@@ -38,6 +38,19 @@ class Column
     }
 
     /**
+     * Returns column's database name
+     *
+     * @return null|string
+     */
+    public function getDatabaseName()
+    {
+        if (isset($this->_data['filter_column']) && is_string($this->_data['filter_column'])) {
+            return $this->_data['filter_column'];
+        }
+        return $this->index();
+    }
+
+    /**
      * Returns column label - to be used by view when rendering table
      *
      * @return string
