@@ -197,7 +197,10 @@ echo ResourceTable::of($news)
         'filter' => function($value) {
             // Do whatever you want with given value!
             return trim(mb_strtolower(($value));
-        }
+        },
+        
+        // You can specify column name to search
+        'filter_column' => 'subject_alias',
     ])
     ->make();
 ```

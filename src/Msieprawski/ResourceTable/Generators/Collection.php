@@ -430,13 +430,13 @@ class Collection
                             // Any value in select - skip it
                             continue;
                         }
-                        $builder = $builder->where($column->index(), '=', $value);
+                        $builder = $builder->where($column->getDatabaseName(), '=', $value);
                         break;
 
                     // Use LIKE '%value' for strings
                     case 'string':
                     default:
-                        $builder = $builder->where($column->index(), 'LIKE', '%'.$value.'%');
+                        $builder = $builder->where($column->getDatabaseName(), 'LIKE', '%'.$value.'%');
                         break;
                 }
             }
