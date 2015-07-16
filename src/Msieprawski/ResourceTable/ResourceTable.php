@@ -50,6 +50,7 @@ class ResourceTable
     private static $_customPerPage;
     private static $_customPage;
     private static $_customFilter;
+    private static $_rendererNamespace;
 
     /**
      * Sets builder and returns collection
@@ -175,6 +176,16 @@ class ResourceTable
     }
 
     /**
+     * Set renderers default namespace to prevent long renderers names
+     *
+     * @param string $namespace
+     */
+    public static function setRendererNamespace($namespace)
+    {
+        self::$_rendererNamespace = (string)$namespace;
+    }
+
+    /**
      * Sets custom configuration (if set) on given Collection
      *
      * @param Collection $collection
@@ -202,6 +213,9 @@ class ResourceTable
         }
         if (self::$_customFilter) {
             $collection->filter(self::$_customFilter);
+        }
+        if (self::$_rendererNamespace) {
+            $collection->setRendererNamespace(self::$_rendererNamespace);
         }
 
         return $collection;

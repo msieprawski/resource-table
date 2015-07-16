@@ -86,6 +86,14 @@ echo ResourceTable::of($news)
             return '<a href="'.url('news/'.$row->id.'/delete').'">Delete</a>';
         }
     ])
+    // Or you can use a string which is a name of renderer class
+    // NOTE: all renderer objects must have callable "render" method - an $row stdClass will be given with all row data
+    ->addColumn([
+        'index' => 'operations',
+        'label' => 'Operations',
+        'sortable' => false,
+        'renderer' => 'Your\Full\Namespace\To\Renderer',
+    ])
     ->make();
 ```
 
@@ -346,6 +354,7 @@ If you want to set `bootstrap` view for each ResourceTable object or you want to
   - `ResourceTable::setPerPage()` - how many results to display on page
   - `ResourceTable::setPage()` - hardcode specific page *(not sure why I've created this)*
   - `ResourceTable::setFilter()` - enable/disable results filter
+  - `ResourceTable::setRendererNamespace()` - set default renderers class namespaces to prevent long class names
 You can call it within `boot` method in `AppServiceProvider` object:
 ```php
 public function boot()
