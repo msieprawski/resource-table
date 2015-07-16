@@ -74,11 +74,25 @@ class Column
      * Returns renderer result (if exists) or null when not defined
      *
      * @param stdClass $row
-     * @return Closure|null
+     * @return mixed
      */
     public function renderer($row)
     {
-        return isset($this->_data['renderer']) ? $this->_data['renderer']($row) : null;
+        if (!isset($this->_data['renderer'])) {
+            return null;
+        }
+
+        if (is_string($this->_data['renderer'])) {
+            $renderer = $this->_data['renderer'];
+            $namespace = ResourceTable::collection()->rendererNamespace();
+            if ($namespace) {
+                $renderer = $namespace.'\\'.$renderer;
+            }
+            $renderer = new $renderer();
+            return $renderer->render($row);
+        }
+
+        return $this->_data['renderer']($row);
     }
 
     /**
@@ -88,7 +102,26 @@ class Column
      */
     public function hasRenderer()
     {
-        return isset($this->_data['renderer']);
+        if (!isset($this->_data['renderer'])) {
+            return false;
+        }
+
+        if (is_string($this->_data['renderer'])) {
+            // Renderer class name has been given
+            $renderer = $this->_data['renderer'];
+            $namespace = ResourceTable::collection()->rendererNamespace();
+            if ($namespace) {
+                $renderer = $namespace.'\\'.$renderer;
+            }
+            if (!class_exists($renderer)) {
+                return false;
+            }
+            if (!method_exists($renderer, 'render') || !is_callable([$renderer, 'render'])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

@@ -92,6 +92,13 @@ class Collection
     private $_extraViewData = [];
 
     /**
+     * Renderers classes default namespace
+     *
+     * @var string
+     */
+    private $_rendererNamespace = '';
+
+    /**
      * Sets builder object
      *
      * @param \Illuminate\Database\Query\Builder $builder
@@ -128,6 +135,33 @@ class Collection
 
         $this->_paginate = $paginate;
         return $this;
+    }
+
+    /**
+     * Set renderer default namespace to prevent long class names
+     *
+     * @param string $namespace
+     * @return $this
+     * @throws CollectionException
+     */
+    public function setRendererNamespace($namespace)
+    {
+        if (!is_string($namespace)) {
+            throw new CollectionException('Renderer namespace must be a string.');
+        }
+
+        $this->_rendererNamespace = $namespace;
+        return $this;
+    }
+
+    /**
+     * Returns renderer default namespace
+     *
+     * @return string
+     */
+    public function rendererNamespace()
+    {
+        return $this->_rendererNamespace;
     }
 
     /**
@@ -378,8 +412,8 @@ class Collection
             return 'Index key is required.';
         }
 
-        if (isset($data['renderer']) && !$data['renderer'] instanceof \Closure) {
-            return 'Renderer function must be instance of Closure object.';
+        if (isset($data['renderer']) && (!$data['renderer'] instanceof \Closure && !is_string($data['renderer']))) {
+            return 'Renderer must be a string or instance of Closure object.';
         }
 
         if (isset($data['filter']) && !$data['filter'] instanceof \Closure) {
