@@ -71,6 +71,18 @@ class Column
     }
 
     /**
+     * Returns query condition type
+     * By default ->where(.. is used
+     * You can change it to for example ->having(.. if you used alias
+     *
+     * @return string
+     */
+    public function queryConditionType()
+    {
+        return mb_strtolower(array_get($this->_data, 'query_condition_type', 'where'));
+    }
+
+    /**
      * Returns renderer result (if exists) or null when not defined
      *
      * @param stdClass $row

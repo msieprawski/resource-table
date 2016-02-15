@@ -424,6 +424,34 @@ class Collection
     }
 
     /**
+     * Adds condition to the query builder
+     *
+     * @param \Illuminate\Database\Query\Builder $builder
+     * @param string $type
+     * @param string $columnName
+     * @param string $operator
+     * @param string $value
+     * @return \Illuminate\Database\Query\Builder
+     */
+    private function _addQueryCondition($builder, $type, $columnName, $operator, $value)
+    {
+        switch ($type) {
+            // Having by
+            case 'having':
+                $builder->having($columnName, $operator, $value);
+                break;
+
+            // Standard where statement
+            case 'where':
+            default:
+                $builder->where($columnName, $operator, $value);
+                break;
+        }
+
+        return $builder;
+    }
+
+    /**
      * Prepares builder object before calling get method on it
      *
      * @throws CollectionException
@@ -464,13 +492,13 @@ class Collection
                             // Any value in select - skip it
                             continue;
                         }
-                        $builder = $builder->where($column->getDatabaseName(), '=', $value);
+                        $builder = $this->_addQueryCondition($builder, $column->queryConditionType(), $column->getDatabaseName(), '=', $value);
                         break;
 
-                    // Use LIKE '%value' for strings
+                    // Use LIKE '%value%' for strings
                     case 'string':
                     default:
-                        $builder = $builder->where($column->getDatabaseName(), 'LIKE', '%'.$value.'%');
+                        $builder = $this->_addQueryCondition($builder, $column->queryConditionType(), $column->getDatabaseName(), 'LIKE', '%'.$value.'%');
                         break;
                 }
             }
