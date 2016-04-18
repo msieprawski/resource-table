@@ -523,7 +523,7 @@ class Collection
             $toSkip = ($this->_page * $this->_perPage) - $this->_perPage;
 
             // A the end set pagination
-            $this->_totalItems = $builder->getCountForPagination();
+            $this->_totalItems = $this->_getCountForPagination($builder);
             $builder = $builder->skip($toSkip)->take($this->_perPage);
         }
         /*
@@ -548,6 +548,19 @@ class Collection
          */
 
         $this->_builder = $builder;
+    }
+
+    /**
+     * Returns total results for given query
+     *
+     * @param \Illuminate\Database\Query\Builder $builder
+     * @return int
+     */
+    private function _getCountForPagination($builder)
+    {
+        $query = clone($builder);
+        $results = $query->get();
+        return count($results);
     }
 
     /**
